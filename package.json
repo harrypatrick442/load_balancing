@@ -1,0 +1,19 @@
+{
+  "name": "load_balancing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harrypatrick442/load_balancing.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harrypatrick442/load_balancing/issues"
+  },
+  "homepage": "https://github.com/harrypatrick442/load_balancing#readme"
+}
