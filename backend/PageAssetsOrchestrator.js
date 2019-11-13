@@ -1,27 +1,30 @@
-module.exports = function(hosts, hostMe){
+module.exports = function(hosts, hostMe, filePathIndex, filePathIndexPrecompiled){
 	const CHANNEL_CLOSED='channelClosed';
 	const CHANNEL_OPENED='channelOpened';
 	const N_ENTRIES_ROUND_ROBBIN=100;
-	const Router = require('./../interserver_communication/Router');
-	const Configuration = require('./../configuration/Configuration');
-	const loadBalancingConfiguration = Configuration.getLoadBalancing().getPageAssets();
-	const orchestratorClientUpdateDelay = loadBalancingConfiguration.getOrchestratorClientUpdateDelay();
+	const InterserverCommunication = require('interserver_communication');
+	const Router = InterserverCommunication.Router;
 	const PageAssetsOrchestratorStrings=require('./PageAssetsOrchestratorStrings');
-	const HostHelper = require('./../helpers/HostHelper');
-	const TemporalCallback = require('./../../../core/backend/TemporalCallback');
-	const CircularBuffer = require('./../../../core/backend/CircularBuffer');
+	const Helpers = require('helpers');
+	const HostHelper = Helpers.HostHelper;
+	const Core = require('core');
+	const TemporalCallback = Core.TemporalCallback;
+	const CircularBuffer = Core.CircularBuffer;
 	const IndexVersioning = require('./IndexVersioning');
-	const Godaddy = require('./../godaddy/Godaddy');
+	const Godaddy = require('godaddy');
+	const loadBalancingConfiguration = Configuration.getLoadBalancing().getPageAssets();
 	var pointedToByDomain= hostMe.getPointedToByDomain();
+	const orchestratorClientUpdateDelay = loadBalancingConfiguration.getOrchestratorClientUpdateDelay();
 	const domain = Configuration.getDomain();
 	var _mapPageAssetServerHostIdToHostOrderedByLoadHandlingFactor;
 	var iAmTheDoorman = false;
 	var nRequestTaken=0;
 	var activatingMe = false;
 	var circularBufferIps;
+	var indexVersioning = new IndexVersioning(filePathIndex, filePathIndexPrecompiled);
 	this.sendIndexPage=function(res){
 		if(!circularBufferIps)return null;
-		var html = IndexVersioning.getVersionForIp(circularBufferIps.next());
+		var html = indexVersioning.getVersionForIp(circularBufferIps.next());
 		res.setHeader('Content-Type', 'text/html');
 		res.send(html);
 	};

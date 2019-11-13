@@ -1,9 +1,8 @@
-module.exports = new (function(){
+module.exports = function(filePathIndex, filePathIndexPrecompiled){
 	const path = require('path');
 	const fs = require('fs');
-	const StringsHelper = require('./../helpers/StringsHelper');
-	const filePathIndex = path.join(__dirname, '/../../frontend/pages/index.html');
-	const filePathIndexPrecompiled = path.join(__dirname, '/../../frontend/precompiled/index.html');
+	const Helpers = require('helpers');
+	const StringsHelper = Helpers.StringsHelper;
 	const Configuration = require('./../configuration/Configuration');
 	const useHttps = Configuration.getUseHttps();
 	const precompiledFrontend = Configuration.getPrecompiledFrontend();
@@ -35,4 +34,4 @@ module.exports = new (function(){
 		}
 		return _raw;
 	};
-})();
+};

@@ -1,22 +1,22 @@
 module.exports = new(function(){
-	const Router = require('./../interserver_communication/Router');
-	const Configuration = require('./../configuration/Configuration');
-	const loadBalancingConfiguration = Configuration.getLoadBalancing().getClientData();
-	const updateDelay = loadBalancingConfiguration.getOrchestratorServerUpdateDelay();
-	console.log(loadBalancingConfiguration);
-	const minRateOfJoiningDevicesPerSecond= loadBalancingConfiguration.getMinRateOfJoiningDevicesPerSecond();
-	const maxRateOfJoiningDevicesPerSecond= loadBalancingConfiguration.getMaxRateOfJoiningDevicesPerSecond();
-	const hostActiveTimeoutDelay = loadBalancingConfiguration.getHostActiveTimeoutDelay();
+	const InterserverCommunication = require('interserver_communication');
+	const Router = InterserverCommunication.Router;
 	const ClientDataOrchestratorStrings=require('./ClientDataOrchestratorStrings');
-	const HostHelper = require('./../helpers/HostHelper');
-	const Timer = require('./../../../core/backend/Timer');
-	const each=require('./../../../core/backend/each');
+	const Helpers = require('helpers');
+	const HostHelper = Helpers.HostHelper;
+	const Core = require('core');
+	const Timer = Core.Timer;
+	const each = Core.each;
 	var mapHostIdToAllowedHost = new Map();
 	var initialized = false;
 	var mapHostIdToState = new Map();
 	var lastOverallStateSnapshot=new OverallStateSnapshot(0);
-	var hostIdMe, timer,pageAssetsHostIds;
-	this.initialize = function(hosts, hostIdMeIn){
+	var hostIdMe, timer,pageAssetsHostIds,updateDelay, minRateOfJoiningDevicesPerSecond,maxRateOfJoiningDevicesPerSecond,hostActiveTimeoutDelay
+	this.initialize = function(hosts, hostIdMeIn, loadBalancingConfiguration){
+		updateDelay = loadBalancingConfiguration.getOrchestratorServerUpdateDelay();
+		minRateOfJoiningDevicesPerSecond= loadBalancingConfiguration.getMinRateOfJoiningDevicesPerSecond();
+		maxRateOfJoiningDevicesPerSecond= loadBalancingConfiguration.getMaxRateOfJoiningDevicesPerSecond();
+		hostActiveTimeoutDelay = loadBalancingConfiguration.getHostActiveTimeoutDelay();
 		if(initialized)throw new Error('Already initialized');
 		hostIdMe = hostIdMeIn;
 		Router.get().addMessageCallback(ClientDataOrchestratorStrings.CLIENT_DATA_ORCHESTRATED_INFO, onOrchestratedInfo);
