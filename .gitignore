@@ -60,3 +60,9 @@ node_modules/ssh2
 node_modules/strings
 backend/node_modules/adult_profiles
 node_modules/adult_profiles
+backend/node_modules/watchdog
+node_modules/watchdog
+backend/node_modules/tippler
+node_modules/tippler
+backend/node_modules/tippler_dns
+node_modules/tippler_dns
