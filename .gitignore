@@ -68,3 +68,5 @@ backend/node_modules/tippler_dns
 node_modules/tippler_dns
 backend/node_modules
 node_modules
+backend/node_modules/.git
+node_modules/.git
