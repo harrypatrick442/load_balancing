@@ -1,8 +1,7 @@
 module.exports = function(filePathIndex, filePathIndexPrecompiled){
 	const path = require('path');
 	const fs = require('fs');
-	const Helpers = require('helpers');
-	const StringsHelper = Helpers.StringsHelper;
+	const StringsHelper = require('core').StringsHelper;
 	const Configuration = require('./../configuration/Configuration');
 	const useHttps = Configuration.getUseHttps();
 	const precompiledFrontend = Configuration.getPrecompiledFrontend();
