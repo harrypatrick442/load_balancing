@@ -1,4 +1,4 @@
-module.exports = function(hosts, hostMe, filePathIndex, filePathIndexPrecompiled){
+module.exports = function(hosts, hostMe, filePathIndex, filePathIndexPrecompiled, domain, precompiledFrontend, useHttps, godaddyConfiguration){
 	const CHANNEL_CLOSED='channelClosed';
 	const CHANNEL_OPENED='channelOpened';
 	const N_ENTRIES_ROUND_ROBBIN=100;
@@ -10,16 +10,14 @@ module.exports = function(hosts, hostMe, filePathIndex, filePathIndexPrecompiled
 	const CircularBuffer = Core.CircularBuffer;
 	const IndexVersioning = require('./IndexVersioning');
 	const Godaddy = require('godaddy');
-	const loadBalancingConfiguration = Configuration.getLoadBalancing().getPageAssets();
+	var godaddy = new Godaddy(godaddyConfiguration);
 	var pointedToByDomain= hostMe.getPointedToByDomain();
-	const orchestratorClientUpdateDelay = loadBalancingConfiguration.getOrchestratorClientUpdateDelay();
-	const domain = Configuration.getDomain();
 	var _mapPageAssetServerHostIdToHostOrderedByLoadHandlingFactor;
 	var iAmTheDoorman = false;
 	var nRequestTaken=0;
 	var activatingMe = false;
-	var circularBufferIps;
-	var indexVersioning = new IndexVersioning(filePathIndex, filePathIndexPrecompiled);
+	var circularBufferIps, domain;
+	var indexVersioning = new IndexVersioning(filePathIndex, filePathIndexPrecompiled, precompiledFrontend, useHttps);
 	this.sendIndexPage=function(res){
 		if(!circularBufferIps)return null;
 		var html = indexVersioning.getVersionForIp(circularBufferIps.next());
@@ -51,11 +49,11 @@ module.exports = function(hosts, hostMe, filePathIndex, filePathIndexPrecompiled
 	}
 	function setDNSToPointToHost(host){
 		return new Promise(function(resolve, reject){
-			Godaddy.getRecords(domain, 'A', '@').then(function(records){
+			godaddy.getRecords(domain, 'A', '@').then(function(records){
 				var record = records.where(record=>recordsToUpdate.indexOf(record.getType())>=0).firstOrDefault();
 				if(!record)throw new Error('No A record');
 				record.setData(host.getIp());
-				Godaddy.replaceRecords(domain, record.getType(), record.getName(), record).then(resolve).catch(reject);
+				godaddy.replaceRecords(domain, record.getType(), record.getName(), record).then(resolve).catch(reject);
 			}).catch(reject);
 		});
 	}
@@ -166,7 +164,7 @@ module.exports = function(hosts, hostMe, filePathIndex, filePathIndexPrecompiled
 	}
 	function findOutIfIAmDoorman(){
 		return new Promise(function(resolve, reject){
-			Godaddy.getRecords(domain, 'A', '@').then(function(records){
+			godaddy.getRecords(domain, 'A', '@').then(function(records){
 				resolve(records.select(record=>record.getData()==hostMe.getIp()).count()>0);
 			}).catch(reject);
 		});

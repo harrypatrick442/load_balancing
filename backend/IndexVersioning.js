@@ -1,10 +1,7 @@
-module.exports = function(filePathIndex, filePathIndexPrecompiled){
+module.exports = function(filePathIndex, filePathIndexPrecompiled, precompiledFrontend, useHttps){
 	const path = require('path');
 	const fs = require('fs');
 	const StringsHelper = require('core').StringsHelper;
-	const Configuration = require('./../configuration/Configuration');
-	const useHttps = Configuration.getUseHttps();
-	const precompiledFrontend = Configuration.getPrecompiledFrontend();
 	console.log('it is');
 	console.log(precompiledFrontend);
 	const protocol = useHttps?'https://':'http://';

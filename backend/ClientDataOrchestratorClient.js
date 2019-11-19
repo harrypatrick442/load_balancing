@@ -1,12 +1,13 @@
-module.exports = function(getNDevices, hosts, hostMe){
-	const Router = require('./../interserver_communication/Router');
-	const Configuration = require('./../configuration/Configuration');
-	const loadBalancingConfiguration = Configuration.getLoadBalancing().getClientData();
-	const orchestratorClientUpdateDelay = loadBalancingConfiguration.getOrchestratorClientUpdateDelay();
+module.exports = function(getNDevices, hosts, hostMe, loadBalancingConfiguration){
+	const InterserverCommunication = require('interserver_communication');
+	const Router = InterserverCommunication.Router;
 	const ClientDataOrchestratorStrings=require('./ClientDataOrchestratorStrings');
 	const ClientDataOrchestratorServer = require('./ClientDataOrchestratorServer');
-	const HostHelper = require('./../helpers/HostHelper');
-	const Timer = require('./../../../core/backend/Timer');
+	const orchestratorClientUpdateDelay = loadBalancingConfiguration.getOrchestratorClientUpdateDelay();
+	const Hosts = require('hosts');
+	const HostHelper = Hosts.HostHelper;
+	const Core = require('core');
+	const Timer = Core.Timer;
 	const isClientDataHost = hostMe.getClientData();
 	const isPageAssetsHost = hostMe.getPageAssets();
 	var _orchestratorServerHostIds;
