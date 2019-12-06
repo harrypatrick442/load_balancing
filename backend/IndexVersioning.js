@@ -4,6 +4,7 @@ module.exports = function(filePathIndex, filePathIndexPrecompiled, precompiledFr
 	const StringsHelper = require('core').StringsHelper;
 	console.log('it is');
 	console.log(precompiledFrontend);
+	console.log(useHttps);
 	const protocol = useHttps?'https://':'http://';
 	var mapIpToVersion = new Map();
 	var _raw;
