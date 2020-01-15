@@ -14,7 +14,7 @@ module.exports = function(getNDevices, hosts, hostMe, loadBalancingConfiguration
 	var timer,endpointsString; 
 	if(isPageAssetsHost){
 		endpointsString=getInitialEndpointsString(); 
-		Router.get().addMessageCallback(ClientDataOrchestratorStrings.CLIENT_DATA_ORCHESTRATOR_PREFERENCES, onPreferences);
+		Router.addMessageCallback(ClientDataOrchestratorStrings.CLIENT_DATA_ORCHESTRATOR_PREFERENCES, onPreferences);
 	}
 	if(isClientDataHost){
 		timer= new Timer({callback:sendOrchestratedInfoToOrchestratorServer, delay:orchestratorClientUpdateDelay, nTicks:-1});
@@ -54,7 +54,7 @@ module.exports = function(getNDevices, hosts, hostMe, loadBalancingConfiguration
 				if(orchestratorServerHostId==hostMe.getId())ClientDataOrchestratorServer.localOrchestratedInfo(orchestratedInfo);
 				else hostIdsOthers.push(orchestratorServerHostId);
 			});
-			Router.get().sendToHostIds(hostIdsOthers, orchestratedInfo);
+			Router.sendToHostIds(hostIdsOthers, orchestratedInfo);
 		}).catch(error);
 	}
 	function onPreferences(msg)  {

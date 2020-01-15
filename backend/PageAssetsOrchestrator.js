@@ -25,7 +25,7 @@ module.exports = function(hosts, hostMe, filePathIndex, filePathIndexPrecompiled
 		res.send(html);
 	};
 	var recordsToUpdate = ['A'];
-	var privateChannels = Router.get().getPrivateChannels();
+	var privateChannels = Router.getPrivateChannels();
 	var temporalCallbackUpdateHostsRoundRobbin= new TemporalCallback({maxNTriggers:20, maxTotalDelay:10000, delay:3000, callback:updateHostsRoundRobbin});
 	var temporalCallbackSeeIfIAmBeingActivatedAndTakeAction = new TemporalCallback({maxNTriggers:20, maxTotalDelay:10000, delay:3000, callback:seeIfIAmBeingActivatedAndTakeAction});
 	privateChannels.addEventListener(CHANNEL_CLOSED, channelClosed);
@@ -157,7 +157,7 @@ module.exports = function(hosts, hostMe, filePathIndex, filePathIndexPrecompiled
 		});
 	}
 	function getMapHostIdToChannel(){
-		return Router.get().getChannels().getArray().toMap(channel=>channel.getHostId(), channel=>channel)
+		return Router.getChannels().getArray().toMap(channel=>channel.getHostId(), channel=>channel)
 	}
 	function error(err){
 		console.error(err);

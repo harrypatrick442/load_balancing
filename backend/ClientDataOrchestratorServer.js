@@ -18,7 +18,7 @@ module.exports = new(function(){
 		hostActiveTimeoutDelay = loadBalancingConfiguration.getHostActiveTimeoutDelay();
 		if(initialized)throw new Error('Already initialized');
 		hostIdMe = hostIdMeIn;
-		Router.get().addMessageCallback(ClientDataOrchestratorStrings.CLIENT_DATA_ORCHESTRATED_INFO, onOrchestratedInfo);
+		Router.addMessageCallback(ClientDataOrchestratorStrings.CLIENT_DATA_ORCHESTRATED_INFO, onOrchestratedInfo);
 		pageAssetsHostIds = hosts.where(host=>host.getPageAssets()&&host.getActive()).select(host=>host.getId()).toList();
 		mapHostIdToAllowedHost=hosts.where(host=>host.getClientData()&&host.getActive()).toMap(host=>host.getId(), host=>host);
 		mapHostIdToAllowedHost.forEach(function(host){
@@ -58,7 +58,7 @@ module.exports = new(function(){
 		var msg ={ type: ClientDataOrchestratorStrings.CLIENT_DATA_ORCHESTRATOR_PREFERENCES,
 			mapHostToWeight:statesWithLoadDeficite.toObj(state=>state.getHost().getIp(), state=>state.getDesiredChangeInLoad())
 		};
-		Router.get().sendToHostIds(pageAssetsHostIds, msg);
+		Router.sendToHostIds(pageAssetsHostIds, msg);
 	}
 	function getApproximateHostStates(){
 		var activeHostStates=[];
