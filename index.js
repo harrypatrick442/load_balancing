@@ -5,5 +5,5 @@ module.exports={
 	IndexVersioning:require('./backend/IndexVersioning'),
 	PageAssetsOrchestrator:require('./backend/PageAssetsOrchestrator'),
 	PageAssetsOrchestratorStrings:require('./backend/PageAssetsOrchestratorStrings'),
-	Orchestrators:require('./Orchestrators');
+	Orchestrators:require('./backend/Orchestrators')
 };

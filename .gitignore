@@ -5,3 +5,4 @@ node_modules/hosts
 node_modules/interserver_communication
 backend/node_modules
 node_modules
+node_modules/server

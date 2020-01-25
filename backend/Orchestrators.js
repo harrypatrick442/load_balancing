@@ -1,5 +1,6 @@
-const LoadBalancing = require('load_balancing');
-const {ClientDataOrchestratorServer, ClientDataOrchestratorClient, PageAssetsOrchestrator} = LoadBalancing;
+const ClientDataOrchestratorServer = require('./ClientDataOrchestratorServer');
+const ClientDataOrchestratorClient =require('./ClientDataOrchestratorClient');
+const PageAssetsOrchestrator = require('./PageAssetsOrchestrator');
 module.exports = function(params){
 	const hosts = params.hosts, hostMe = params.hostMe, sourceScriptsLocally = params.sourceScriptsLocally,
 	useHttps = params.useHttps, godaddyConfiguration = params.godaddyConfiguration,
@@ -13,41 +14,43 @@ module.exports = function(params){
 	if(!domain)throw new Error('No domain provided');
 	if(!loadBalancingConfiguration)throw new Error('No loadBalancingConfiguration provided');
 	var pageAssetsOrchestrator, clientDataOrchestratorClient;
-	const iAmClientData = hostMe.getClientData(),
-		iAmPageAssets = hostMe.getPageAssets(),
-		iAmOrchestrator = hostMe.getOrchestrator();
-	app.get('/', function(req, res, next){
-		console.log('/');
-		if(!pageAssetsOrchestrator||sourceScriptsLocally)return next();
-		pageAssetsOrchestrator.sendIndexPage(res);
-	});
-	if(iAmPageAssets){
-		if(useLocal){
-			var endpointLocal = JSON.stringify({localhost:1});
-			app.get('/endpoints',function(req, res, next){
-				console.log(endpointLocal);
-				res.send(endpointLocal);
-			});
+	Servers.getForPort(80).then((server)=>{
+		const iAmClientData = hostMe.getClientData(),
+			iAmPageAssets = hostMe.getPageAssets(),
+			iAmOrchestrator = hostMe.getOrchestrator();
+		server.get('/', function(req, res, next){
+			console.log('/');
+			if(!pageAssetsOrchestrator||sourceScriptsLocally)return next();
+			pageAssetsOrchestrator.sendIndexPage(res);
+		});
+		if(iAmPageAssets){
+			if(useLocal){
+				var endpointLocal = JSON.stringify({localhost:1});
+				server.get('/endpoints',function(req, res, next){
+					console.log(endpointLocal);
+					res.send(endpointLocal);
+				});
+			}
+			else
+			{
+				server.get('/endpoints',function(req,res,next){
+					if(clientDataOrchestratorClient)
+						res.send(clientDataOrchestratorClient.getEndpointsString());
+					else res.end();
+				});
+			}
 		}
-		else
-		{
-			app.get('/endpoints',function(req,res,next){
-				if(clientDataOrchestratorClient)
-					res.send(clientDataOrchestratorClient.getEndpointsString());
-				else res.end();
-			});
+		if(iAmPageAssets){
+			pageAssetsOrchestrator = new PageAssetsOrchestrator(hosts, hostMe, filePathIndex, filePathIndexPrecompiled, 
+				domain, precompiledFrontend, useHttps, godaddyConfiguration);
 		}
-	}
-	if(iAmPageAssets){
-		pageAssetsOrchestrator = new PageAssetsOrchestrator(hosts, hostMe, filePathIndex, filePathIndexPrecompiled, 
-			domain, precompiledFrontend, useHttps, godaddyConfiguration);
-	}
-	if(iAmClientData||iAmPageAssets){
-		console.log(loadBalancingConfiguration);
-		clientDataOrchestratorClient = new ClientDataOrchestratorClient(getNConnections, hosts, hostMe,
-			loadBalancingConfiguration, domain);
-	}
-	if(iAmOrchestrator){
-		ClientDataOrchestratorServer.initialize(hosts, hostMe.getId(), loadBalancingConfiguration.getClientData());
-	}
+		if(iAmClientData||iAmPageAssets){
+			console.log(loadBalancingConfiguration);
+			clientDataOrchestratorClient = new ClientDataOrchestratorClient(getNConnections, hosts, hostMe,
+				loadBalancingConfiguration, domain);
+		}
+		if(iAmOrchestrator){
+			ClientDataOrchestratorServer.initialize(hosts, hostMe.getId(), loadBalancingConfiguration.getClientData());
+		}
+	}).catch(reject);
 };
