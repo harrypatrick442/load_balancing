@@ -23,12 +23,14 @@ module.exports = function(params){
     if(!filePathIndex)throw new Error('No filePathIndex provided');
     if(!filePathIndexPrecompiled)throw new Error('No filePathIndexPrecompiled provided');
     var pageAssetsOrchestrator, clientDataOrchestratorClient;
-    Servers.getForPort(80).then((server)=>{
+    Servers.getForPort(hostMe.getAssetsPort()).then((server)=>{
       const iAmClientData = hostMe.getClientData(),
         iAmPageAssets = hostMe.getPageAssets(),
         iAmOrchestrator = hostMe.getOrchestrator();
       server.get('/', function(req, res, next){
         console.log('/');
+		console.log(pageAssetsOrchestrator);
+		console.log(sourceScriptsLocally);
         if(!pageAssetsOrchestrator||sourceScriptsLocally)return next();
         pageAssetsOrchestrator.sendIndexPage(res);
       });
